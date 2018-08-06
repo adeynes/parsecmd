@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\cucumber\command;
+namespace adeynes\parsecmd;
 
 class ParsedCommand
 {

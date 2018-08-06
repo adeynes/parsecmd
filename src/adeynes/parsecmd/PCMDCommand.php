@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\cucumber\command;
+namespace adeynes\parsecmd;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
