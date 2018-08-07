@@ -30,13 +30,13 @@ abstract class PCMDCommand extends Command implements PluginIdentifiableCommand
     protected $tags;
 
     protected function __construct(Plugin $plugin, string $name, string $permission = null, string $description = '',
-                                   int $min_args = 0, string $usageMessage = null, array $tags = [])
+                                   int $min_args = 0, string $usage = null, array $tags = [])
     {
         $this->plugin = $plugin;
         $this->min_args = $min_args;
         $this->tags = $tags;
         $this->setPermission($permission);
-        parent::__construct($name, $description, $usageMessage);
+        parent::__construct($name, $description, $usage);
     }
 
     /**
@@ -61,7 +61,7 @@ abstract class PCMDCommand extends Command implements PluginIdentifiableCommand
     }
 
     /**
-     * This contains boilerplate code e.g. permission checking, and executes CucumberCommand::_execute()
+     * This contains boilerplate code e.g. permission checking, and runs _execute()
      * @param CommandSender $sender
      * @param string $label
      * @param array $args

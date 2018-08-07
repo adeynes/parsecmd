@@ -34,27 +34,27 @@ class ParsedCommand
 
     /**
      * Retrieve the specified arguments
-     * @param int[]|int[][] $requests An integer will retrieve the element at that index,
+     * @param int[]|int[][] $queries An integer will retrieve the element at that index,
      * an $array will implode the elements from $array[0] with length $array[1]
-     * i.e. to get ['hello world', 'argument', 'cucumber is cool'] from the arguments
-     * 'cucumber is cool hello world argument', you would request [[3, 2], -1, [0, 3]]
+     * i.e. to get ['hello world', 'argument', 'beans are cool'] from the arguments
+     * 'beans are cool hello world argument', you would request [[3, 2], -1, [0, 3]]
      * @return string[]
      */
-    public function get(array $requests): array
+    public function get(array $queries): array
     {
         $args = [];
 
-        foreach ($requests as $request) {
-            if (is_array($request)) {
+        foreach ($queries as $query) {
+            if (is_array($query)) {
                 // $request[0] is offset, $request[1] is length. Negative length means start from back
-                if ($request[1] < 0) {
-                    $request[1] = count($this->getArgs()) - $request[0];
+                if ($query[1] < 0) {
+                    $query[1] = count($this->getArgs()) - $query[0];
                 }
 
-                $args[] = trim(implode(' ', array_slice($this->getArgs(), ...$request)));
+                $args[] = trim(implode(' ', array_slice($this->getArgs(), ...$query)));
             } else {
                 // array_slice instead of access to allow negative offsets
-                $args[] = array_slice($this->getArgs(), $request, 1)[0];
+                $args[] = array_slice($this->getArgs(), $query, 1)[0];
             }
         }
 
