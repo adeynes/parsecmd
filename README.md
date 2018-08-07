@@ -1,12 +1,12 @@
 # parsecmd
 
-**parsecmd** is a powerful virion for parsing commands in PocketMine-MP. It parses argument lists and tags (much like shell flags) into a data structure that can be easily queries.
+**parsecmd** is a powerful virion for parsing commands in PocketMine-MP. It parses argument lists and tags (much like shell flags) into a data structure that can be easily queries.<br>
 *Upcoming feature: UI generation*
 
 Throughout this README, our example command will be `/rawtell`, which sends a message, popup, or title to a player without the `[Steve -> Alex]` introduction. The usage is `/rawtell <player> <message> [-nomessage] [-popup] [-title] [-password <password>]`. By default, the command sends a chat message. The `nomessage` tag does not send the message through chat. The `popup` tag sends a popup. The `title` tag sends a title. The `password` tag accepts a 3-argument password. The correct password is `bush baked beans`. If the given password matches, the specified player will receive a special message.
 
 ### The `PCMDCommand` class
-The `PCMDCommand` class extends `pocketmine\command\Command` and reduces boilerplate code for command classes.
+The `PCMDCommand` class extends `pocketmine\command\Command` and reduces boilerplate code for command classes.<br>
 The `execute()` method is implemented and does permission testing and verifies that at least a minimum specified amount of arguments is supplied. It should not be overridden; instead, write your code in `_execute()`.
 
 #### `Constructor`
@@ -15,12 +15,12 @@ protected function __construct(Plugin $plugin, string $name, string $permission 
                                int $min_args = 0, string $usage = null, array $tags = []);
 ```
 
-**`$plugin`:** the plugin main class. Returned in `PCMDCommand::getPlugin()`.
-**`$name`:** the name of the command (no slash!), e.g. `rawtell`.
-**`$permission`:** the permission node for the command, e.g. `myplugin.command.rawtell`.
-**`$description`:** the command's description, e.g. `Send a raw message to a player`.
-**`$min_args`:** The minimum amount of arguments for the command. In our case, we want 2: the player name and a 1-word-minimum message.
-**`$usage`:** The usage message for the command. In our case, `/rawtell <player> <message> [-nomessage] [-popup] [-title] [-password <password>]`.
+**`$plugin`:** the plugin main class. Returned in `PCMDCommand::getPlugin()`.<br>
+**`$name`:** the name of the command (no slash!), e.g. `rawtell`.<br>
+**`$permission`:** the permission node for the command, e.g. `myplugin.command.rawtell`.<br>
+**`$description`:** the command's description, e.g. `Send a raw message to a player`.<br>
+**`$min_args`:** The minimum amount of arguments for the command. In our case, we want 2: the player name and a 1-word-minimum message.<br>
+**`$usage`:** The usage message for the command. In our case, `/rawtell <player> <message> [-nomessage] [-popup] [-title] [-password <password>]`.<br>
 **`$tags`:** An array of tags for this command, in the form `[tag name => number of arguments that make up its value]`. In our case, we want: `['nomessage' => 0, 'popup' => 0, 'title' => 0, 'password' => 3]`. Neither of the first three tags accept any arguments, and the password is 3 arguments long.
 
 #### `getPlugin()`
@@ -84,6 +84,7 @@ This accepts a duration string in the form `AyBMCwDdEhFm` and returns a UNIX tim
 * `d`: day
 * `h`: hour
 * `m`: minute
+
 For instance, 1 year and 3 months is `1y3M` or `15M`, 1 week and 4 days is `1w4d` or `11d`, and 1 hour and 45 minutes is `1h45m` or `105m`.
 
 ### The `ParsedCommand` class
@@ -99,8 +100,8 @@ This returns the command's name; `CommandParser::parse($command, $args)->getName
 ```php
 public function get(array $queries): array;
 ```
-This queries the argument list and returns the specified arguments. A single integer value in the queries array will retrive the argument at that value. A pair of two integers will implode the arguments starting at the index given by the first element with the second element as the length. Negative values are allowed and start at the end of the array (-1 is the last element, -2 the penultimate, etc).
-Given the argument list `steve hey steve you are cool`, the queries `[0, [1, -1]]` would return `['steve', 'hey steve you are cool']`.
+This queries the argument list and returns the specified arguments. A single integer value in the queries array will retrive the argument at that value. A pair of two integers will implode the arguments starting at the index given by the first element with the second element as the length. Negative values are allowed and start at the end of the array (-1 is the last element, -2 the penultimate, etc).<br>
+Given the argument list `steve hey steve you are cool`, the queries `[0, [1, -1]]` would return `['steve', 'hey steve you are cool']`.<br>
 Given the argument list `my favorite beans are baked beans from bush`, the queries `[-1, [4, 2], 3, [0, 2]]` would return `['bush', 'baked beans', 'are', 'my favorite']`. `implode`-ing that would then return `bush baked beans are my favorite`.
 
 #### `getArgs()`
