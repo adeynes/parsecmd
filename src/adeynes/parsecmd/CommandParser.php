@@ -9,6 +9,7 @@ class CommandParser
     public static function parse(PCMDCommand $command, array $args): ParsedCommand
     {
         $tags = [];
+        $copy = $args;
 
         foreach ($args as $i => $arg) {
             if (strpos($arg, '-') !== 0) continue;
@@ -19,7 +20,7 @@ class CommandParser
             // Use is_null because $length can be 0 so !0 would be true
             if (is_null($length = $command->getTag($tag))) continue;
 
-            $tags[$tag] = implode(' ', array_slice($args, $i + 1, $length));
+            $tags[$tag] = implode(' ', array_slice($copy, $i + 1, $length));
 
             // Remove tag & tag parameters
             // array_diff_key() doesn't reorder the keys
@@ -32,16 +33,15 @@ class CommandParser
     public static function parseDuration(string $duration): int
     {
         $parts = str_split($duration);
-        $current = 0;
         $time_units = ['y' => 'year', 'M' => 'month', 'w' => 'week', 'd' => 'day', 'h' => 'hour', 'm' => 'minute'];
         $time = '';
 
         foreach ($time_units as $symbol => $unit) {
             if (($length = array_search($symbol, $parts)) === false) continue;
 
-            $n = implode('', array_slice($parts, $current, $length));
+            $n = implode('', array_slice($parts, 0, $length));
             $time .= "$n $unit ";
-            array_splice($parts, $current, $length + 1);
+            array_splice($parts, 0, $length + 1);
         }
 
         $time = trim($time);
