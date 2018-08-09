@@ -6,6 +6,45 @@ namespace adeynes\parsecmd;
 class CommandParser
 {
 
+    public static function generateBlueprint(string $usage): CommandBlueprint
+    {
+        /** @var Argument[] $args */
+        $args = [];
+        /** @var Flag[] $flags */
+        $flags = [];
+
+        foreach (explode(' ', $usage) as $usage_chunk) {
+            $lengths = [];
+            preg_match_all('/\((.*?)\)/', $usage_chunk, $lengths);
+
+            // defaults is no matches (ie no length specified)
+            $length = -1; // -1 is infinite length
+            $name = $usage_chunk;
+
+            // [[]] is no matches
+            if ($lengths !== [[]]) {
+                // given '(beans) are (cool)', [0] will be [(beans), (cool)], [1] will be [beans, cool]
+
+                $length_tag = end($lengths[0]);
+
+                // length tag wasn't () (which means infinite length is infinite (-1))
+                if (end($lengths[1]) !== '') {
+                    $length = end($lengths[1]);
+                }
+
+                $parenthesis_index = strrpos($usage_chunk, $length_tag);
+                // remove the parenthesis to get just the name
+                $name = substr($usage_chunk, 0, $parenthesis_index);
+            }
+
+            if (strpos($usage_chunk, '-') === 0) { // flag
+                $flags[] = new Flag($name, $length);
+            } else { // argument
+                $args[] = new Argument($name, $length);
+            }
+        }
+    }
+
     public static function parse(PCMDCommand $command, array $args): ParsedCommand
     {
         $tags = [];
