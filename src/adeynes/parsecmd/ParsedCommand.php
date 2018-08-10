@@ -6,30 +6,25 @@ namespace adeynes\parsecmd;
 class ParsedCommand
 {
 
-    /** @var string */
-    protected $name;
+    /** @var CommandBlueprint */
+    protected $blueprint;
 
     /** @var string[] */
-    protected $args;
+    protected $arguments;
 
     /** @var string[] */
-    protected $tags;
+    protected $flags;
 
     /**
-     * @param string $name
-     * @param string[] $args
-     * @param string[] $tags
+     * @param CommandBlueprint blueprint
+     * @param string[] $arguments
+     * @param string[] $flags
      */
-    public function __construct(string $name, array $args, array $tags)
+    public function __construct(CommandBlueprint $blueprint, array $arguments, array $flags)
     {
-        $this->name = $name;
-        $this->args = $args;
-        $this->tags = $tags;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
+        $this->blueprint = $blueprint;
+        $this->arguments = $arguments;
+        $this->flags = $flags;
     }
 
     /**
@@ -40,6 +35,7 @@ class ParsedCommand
      * 'beans are cool hello world argument', you would request [[3, 2], -1, [0, 3]]
      * @return string[]
      */
+    /*
     public function get(array $queries): array
     {
         $args = [];
@@ -60,26 +56,52 @@ class ParsedCommand
 
         return $args;
     }
+    */
 
     /**
+     * @param string[] $queries
      * @return string[]
      */
-    public function getArgs(): array
+    public function get(array $queries): array
     {
-        return $this->args;
+        $arguments = [];
+
+        foreach ($queries as $query) {
+            $arguments[$query] = $this->getArgument($query);
+        }
+
+        return $arguments;
+    }
+
+    public function getBlueprint(): CommandBlueprint
+    {
+        return $this->blueprint;
     }
 
     /**
      * @return string[]
      */
-    public function getTags(): array
+    public function getArguments(): array
     {
-        return $this->tags;
+        return $this->arguments;
     }
 
-    public function getTag(string $tag): ?string
+    public function getArgument(string $name): ?string
     {
-        return $this->getTags()[$tag] ?? null;
+        return $this->getArguments()[$name] ?? null;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getFlags(): array
+    {
+        return $this->flags;
+    }
+
+    public function getFlag(string $name): ?string
+    {
+        return $this->getFlags()[$name] ?? null;
     }
 
 }

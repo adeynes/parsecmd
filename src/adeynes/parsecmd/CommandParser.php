@@ -8,8 +8,8 @@ class CommandParser
 
     public static function generateBlueprint(string $usage): CommandBlueprint
     {
-        /** @var Argument[] $args */
-        $args = [];
+        /** @var Argument[] $arguments */
+        $arguments = [];
         /** @var Flag[] $flags */
         $flags = [];
 
@@ -40,33 +40,38 @@ class CommandParser
             if (strpos($usage_chunk, '-') === 0) { // flag
                 $flags[] = new Flag($name, $length);
             } else { // argument
-                $args[] = new Argument($name, $length);
+                $arguments[] = new Argument($name, $length);
             }
         }
+
+        // TODO: ability to use default usage from plugin.yml
+        return new CommandBlueprint($arguments, $flags, $usage);
+
     }
 
-    public static function parse(PCMDCommand $command, array $args): ParsedCommand
+    public static function parse(Command $command, array $arguments): ParsedCommand
     {
-        $tags = [];
-        $copy = $args;
+        $flags = [];
+        $copy = $arguments;
 
-        foreach ($args as $i => $arg) {
-            if (strpos($arg, '-') !== 0) continue;
+        foreach ($arguments as $i => $argument) {
+            if (strpos($argument, '-') !== 0) continue;
 
             // Avoid getting finding the tag twice; only first time counts
-            if (isset($tags[$tag = substr($arg, 1)])) continue;
+            if (isset($flags[$flag = substr($argument, 1)])) continue;
 
             // Use is_null because $length can be 0 so !0 would be true
-            if (is_null($length = $command->getTag($tag))) continue;
+            if (is_null($length = $command->getBlueprint()->getFlag($flag))) continue;
 
-            $tags[$tag] = implode(' ', array_slice($copy, $i + 1, $length));
+            if ($length === -1) $length = count($copy);
+            $flags[$flag] = implode(' ', array_slice($copy, $i + 1, $length));
 
             // Remove tag & tag parameters
             // array_diff_key() doesn't reorder the keys
-            $args = array_diff_key($args, self::makeKeys(range($i, $i + $length)));
+            $arguments = array_diff_key($arguments, self::makeKeys(range($i, $i + $length)));
         }
 
-        return new ParsedCommand($command->getName(), $args, $tags);
+        return new ParsedCommand($command->getBlueprint(), $arguments, $flags);
     }
 
     public static function parseDuration(string $duration): int
