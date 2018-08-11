@@ -13,7 +13,10 @@ class CommandParser
         /** @var Flag[] $flags */
         $flags = [];
 
-        foreach (explode(' ', $usage) as $usage_chunk) {
+        foreach (explode(' ', $usage) as $i => $usage_chunk) {
+            // first chunk is command name
+            if ($i === 0) continue;
+
             $lengths = [];
             preg_match_all('/\((.*?)\)/', $usage_chunk, $lengths);
 
@@ -29,7 +32,7 @@ class CommandParser
 
                 // length tag wasn't () (which means infinite length is infinite (-1))
                 if (end($lengths[1]) !== '') {
-                    $length = end($lengths[1]);
+                    $length = (int) end($lengths[1]);
                 }
 
                 $parenthesis_index = strrpos($usage_chunk, $length_tag);
@@ -38,7 +41,7 @@ class CommandParser
             }
 
             if (strpos($usage_chunk, '-') === 0) { // flag
-                $flags[] = new Flag($name, $length);
+                $flags[] = new Flag(substr($name, 1, strlen($name)), $length);
             } else { // argument
                 $arguments[] = new Argument($name, $length);
             }
@@ -53,6 +56,7 @@ class CommandParser
     {
         $flags = [];
         $copy = $arguments;
+        $blueprint = $command->getBlueprint();
 
         foreach ($arguments as $i => $argument) {
             if (strpos($argument, '-') !== 0) continue;
@@ -61,17 +65,37 @@ class CommandParser
             if (isset($flags[$flag = substr($argument, 1)])) continue;
 
             // Use is_null because $length can be 0 so !0 would be true
-            if (is_null($length = $command->getBlueprint()->getFlag($flag))) continue;
+            if (is_null($flag = $blueprint->getFlag($flag))) continue;
 
+            $length = $flag->getLength();
             if ($length === -1) $length = count($copy);
-            $flags[$flag] = implode(' ', array_slice($copy, $i + 1, $length));
+            $flags[$flag->getName()] = implode(' ', array_slice($copy, $i + 1, $length));
 
             // Remove tag & tag parameters
             // array_diff_key() doesn't reorder the keys
             $arguments = array_diff_key($arguments, self::makeKeys(range($i, $i + $length)));
         }
 
-        return new ParsedCommand($command->getBlueprint(), $arguments, $flags);
+        $parsed_arguments = [];
+
+        [1, 2, 3, 4, 5];
+        foreach ($blueprint->getArguments() as $blueprint_argument) {
+            $length = $blueprint_argument->getLength();
+            if ($length < 0) {
+                $length = count($arguments) + $length + 1;
+            }
+
+            $argument = implode(
+                ' ',
+                array_splice($arguments, 0, $length)
+            );
+
+            if ($argument === '') continue;
+
+            $parsed_arguments[$blueprint_argument->getName()] = $argument;
+        }
+
+        return new ParsedCommand($blueprint, $parsed_arguments, $flags);
     }
 
     public static function parseDuration(string $duration): int

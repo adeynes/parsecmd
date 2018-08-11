@@ -67,7 +67,7 @@ class ParsedCommand
         $arguments = [];
 
         foreach ($queries as $query) {
-            $arguments[$query] = $this->getArgument($query);
+            $arguments[] = $this->getArgument($query);
         }
 
         return $arguments;

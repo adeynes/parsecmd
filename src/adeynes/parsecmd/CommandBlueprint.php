@@ -67,7 +67,9 @@ class CommandBlueprint
         $count = 0;
         foreach ($this->getArguments() as $argument) {
             if (!$argument->isOptional()) {
-                $count += $argument->getLength();
+                $length = $argument->getLength();
+                if ($length < 0) $length = 1;
+                $count += $length;
             }
         }
 

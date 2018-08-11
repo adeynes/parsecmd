@@ -1,5 +1,7 @@
 # parsecmd
 
+## This README is outdated for 2.0!
+
 **parsecmd** is a powerful virion for parsing commands in PocketMine-MP. It parses argument lists and tags (much like shell flags) into a data structure that can be easily queries.<br>
 *Upcoming feature: UI generation*
 
