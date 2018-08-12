@@ -43,7 +43,13 @@ class CommandParser
             if (strpos($usage_chunk, '-') === 0) { // flag
                 $flags[] = new Flag(substr($name, 1, strlen($name)), $length);
             } else { // argument
-                $arguments[] = new Argument($name, $length);
+                $optional = false;
+                if ($name{0} === '?') {
+                    $optional = true;
+                    $name = substr($name, 1, strlen($name) - 1);
+                }
+
+                $arguments[] = new Argument($name, $length, $optional);
             }
         }
 
@@ -90,7 +96,7 @@ class CommandParser
                 array_splice($arguments, 0, $length)
             );
 
-            if ($argument === '') continue;
+            if ($argument === '') $argument = null;
 
             $parsed_arguments[$blueprint_argument->getName()] = $argument;
         }

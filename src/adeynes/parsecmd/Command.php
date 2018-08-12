@@ -48,8 +48,7 @@ abstract class Command extends PMCommand implements PluginIdentifiableCommand
         if (!$this->testPermission($sender)) return false;
 
         $command = CommandParser::parse($this, $arguments);
-        print_r($command);
-        if (count($command->getArguments()) < $this->getBlueprint()->getMinimumArgumentCount()) {
+        if ($command->getArgumentCount() < $this->getBlueprint()->getMinimumArgumentCount()) {
             throw new InvalidCommandSyntaxException;
         }
 

@@ -9,7 +9,7 @@ class ParsedCommand
     /** @var CommandBlueprint */
     protected $blueprint;
 
-    /** @var string[] */
+    /** @var null[]|string[] */
     protected $arguments;
 
     /** @var string[] */
@@ -89,6 +89,17 @@ class ParsedCommand
     public function getArgument(string $name): ?string
     {
         return $this->getArguments()[$name] ?? null;
+    }
+
+    public function getArgumentCount(): int
+    {
+        $count = 0;
+        foreach ($this->getArguments() as $argument) {
+            if (!is_null($argument)) {
+                $count += count(explode(' ', $argument));
+            };
+        }
+        return $count;
     }
 
     /**

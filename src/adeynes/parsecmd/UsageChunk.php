@@ -12,14 +12,10 @@ abstract class UsageChunk
     /** @var int */
     protected $length;
 
-    /** @var bool */
-    protected $is_optional;
-
-    public function __construct(string $name, int $length, bool $is_optional = false)
+    public function __construct(string $name, int $length)
     {
         $this->name = $name;
         $this->length = $length;
-        $this->is_optional = $is_optional;
     }
 
     public function getName(): string
@@ -30,11 +26,6 @@ abstract class UsageChunk
     public function getLength(): int
     {
         return $this->length;
-    }
-
-    public function isOptional(): bool
-    {
-        return $this->is_optional;
     }
 
 }
