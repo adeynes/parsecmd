@@ -7,10 +7,10 @@ class CommandBlueprint
 {
 
     /** @var Argument[] */
-    protected $arguments;
+    protected $arguments = [];
 
     /** @var Flag[] */
-    protected $flags;
+    protected $flags = [];
 
     /** @var null|string */
     protected $usage;
