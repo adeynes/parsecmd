@@ -7,6 +7,7 @@ use pocketmine\command\Command as PMCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 
 abstract class Command extends PMCommand implements PluginIdentifiableCommand
@@ -49,7 +50,10 @@ abstract class Command extends PMCommand implements PluginIdentifiableCommand
 
         $command = CommandParser::parse($this, $arguments);
         if ($command->getArgumentCount() < $this->getBlueprint()->getMinimumArgumentCount()) {
-            throw new InvalidCommandSyntaxException;
+            if (!$sender instanceof Player) throw new InvalidCommandSyntaxException;
+
+            $form = parsecmd::getInstance()->newForm()->setTitle(strtoupper($this->getName()));
+            $this->getBlueprint()->populateForm($form)->send($sender);
         }
 
         return $this->_execute($sender, $command);

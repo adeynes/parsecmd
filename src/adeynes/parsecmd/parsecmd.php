@@ -17,9 +17,13 @@ final class parsecmd
     /** @var Form[] */
     private $forms;
 
+    /** @var int */
+    private $next_form_id;
+
     private function __construct(Plugin $plugin)
     {
         $this->plugin = $plugin;
+        $this->next_form_id = rand(0xAAAAAA, 0xFFFFFF);
         $plugin->getServer()->getPluginManager()->registerEvents(new EventListener(), $plugin);
     }
 
@@ -52,6 +56,18 @@ final class parsecmd
             );
         }
         $map->register($plugin->getName(), new $class($plugin, CommandParser::generateBlueprint($usage)));
+    }
+
+    public function newForm(): Form
+    {
+        $form = new Form($id = $this->bumpNextFormId());
+        $this->forms[$id] = $form;
+        return $form;
+    }
+
+    private function bumpNextFormId(): int
+    {
+        return $this->next_form_id++;
     }
 
 }

@@ -23,7 +23,7 @@ class Form
      */
     protected $aliases = [];
 
-    public function __construct(string $id)
+    public function __construct(int $id)
     {
         $this->id = $id;
         $this->data = [
@@ -46,9 +46,18 @@ class Form
         return $this->data;
     }
 
-    public function setTitle(string $title): void
+    public function processData(array &$data): array
+    {
+        foreach ($data as $i => $datum) {
+            $data[$this->aliases[$i]] = $datum;
+        }
+        return $data;
+    }
+
+    public function setTitle(string $title): self
     {
         $this->data['title'] = $title;
+        return $this;
     }
 
     protected function addContent(array $content, ?string $alias): self
