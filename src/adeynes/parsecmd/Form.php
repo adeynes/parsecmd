@@ -15,8 +15,8 @@ class Form
     /** @var array[][] */
     protected $data;
 
-    /** @var null|callable */
-    protected $callable = null;
+    /** @var string */
+    protected $command_name;
 
     /**
      * @var array Nice human-readable names to reference fields instead of good ol' numbers
@@ -46,18 +46,30 @@ class Form
         return $this->data;
     }
 
-    public function processData(array &$data): array
+    public function getCommandName(): ?string
     {
-        foreach ($data as $i => $datum) {
-            $data[$this->aliases[$i]] = $datum;
-        }
-        return $data;
+        return $this->command_name;
     }
 
     public function setTitle(string $title): self
     {
         $this->data['title'] = $title;
         return $this;
+    }
+
+    public function setCommandName(string $command_name): self
+    {
+        $this->command_name = $command_name;
+        return $this;
+    }
+
+    public function process(array $data): array
+    {
+        $new = [];
+        foreach ($data as $i => $datum) {
+            $new[$this->aliases[$i]] = $datum;
+        }
+        return $new;
     }
 
     protected function addContent(array $content, ?string $alias): self
@@ -130,7 +142,7 @@ class Form
 
     public function send(Player $player): void
     {
-        $packet = new ModalFormRequestPacket;
+        $packet = new ModalFormRequestPacket();
         $packet->formId = $this->getId();
         $packet->formData = json_encode($this->getData());
         $player->dataPacket($packet);

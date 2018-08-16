@@ -13,20 +13,23 @@ use pocketmine\plugin\Plugin;
 abstract class Command extends PMCommand implements PluginIdentifiableCommand
 {
 
-    /** @var Plugin */
+    /** @var UsesParsecmdPlugin */
     protected $plugin;
 
     /** @var CommandBlueprint */
     protected $blueprint;
 
-    protected function __construct(Plugin $plugin, CommandBlueprint $blueprint, string $name, string $permission = null,
-                                   string $description = '', string $usage = null) {
+    protected function __construct(UsesParsecmdPlugin $plugin, CommandBlueprint $blueprint, string $name,
+                                   string $permission = null, string $description = '', string $usage = null) {
         $this->plugin = $plugin;
         $this->blueprint = $blueprint;
         $this->setPermission($permission);
         parent::__construct($name, $description, $usage ?? $blueprint->getUsage());
     }
 
+    /**
+     * @return UsesParsecmdPlugin
+     */
     public function getPlugin(): Plugin
     {
         return $this->plugin;
@@ -52,8 +55,11 @@ abstract class Command extends PMCommand implements PluginIdentifiableCommand
         if ($command->getArgumentCount() < $this->getBlueprint()->getMinimumArgumentCount()) {
             if (!$sender instanceof Player) throw new InvalidCommandSyntaxException;
 
-            $form = parsecmd::getInstance()->newForm()->setTitle(strtoupper($this->getName()));
+            $form = $this->getPlugin()->getParsecmd()->newForm()
+                ->setCommandName($this->getName())
+                ->setTitle(strtoupper($this->getName()));
             $this->getBlueprint()->populateForm($form)->send($sender);
+            return false;
         }
 
         return $this->_execute($sender, $command);

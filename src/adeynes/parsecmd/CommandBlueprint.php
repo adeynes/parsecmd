@@ -80,15 +80,15 @@ class CommandBlueprint
     {
         foreach ($this->getArguments() as $argument) {
             $name = $argument->getName();
-            $form->addInput($name, '', '', $name);
+            $form->addInput(ucfirst($name), '', '', $name);
         }
 
         foreach ($this->getFlags() as $flag) {
             $name = $flag->getName();
             if ($flag->getLength() === 0) {
-                $form->addToggle($name, false, $name);
+                $form->addToggle(ucfirst($name), false, $name);
             } else {
-                $form->addInput($name, '', '', $name);
+                $form->addInput(ucfirst($name) . " (optional)", '', '', $name);
             }
         }
 

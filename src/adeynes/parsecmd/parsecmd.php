@@ -3,16 +3,17 @@ declare(strict_types=1);
 
 namespace adeynes\parsecmd;
 
-use pocketmine\plugin\Plugin;
-
 final class parsecmd
 {
 
     /** @var null|parsecmd */
     private static $instance = null;
 
-    /** @var Plugin */
+    /** @var UsesParsecmdPlugin */
     private $plugin;
+
+    /** @var Command[] */
+    private $commands;
 
     /** @var Form[] */
     private $forms;
@@ -20,14 +21,14 @@ final class parsecmd
     /** @var int */
     private $next_form_id;
 
-    private function __construct(Plugin $plugin)
+    private function __construct(UsesParsecmdPlugin $plugin)
     {
         $this->plugin = $plugin;
         $this->next_form_id = rand(0xAAAAAA, 0xFFFFFF);
-        $plugin->getServer()->getPluginManager()->registerEvents(new EventListener(), $plugin);
+        $plugin->getServer()->getPluginManager()->registerEvents(new EventListener($this), $plugin);
     }
 
-    public static function new(Plugin $plugin): ?self
+    public static function new(UsesParsecmdPlugin $plugin): ?self
     {
         if (self::getInstance()) {
             $plugin->getServer()->getLogger()->critical("{$plugin->getName()} has already instantiated parsecmd!");
@@ -41,9 +42,19 @@ final class parsecmd
         return self::$instance;
     }
 
-    public function getPlugin(): Plugin
+    public function getPlugin(): UsesParsecmdPlugin
     {
         return $this->plugin;
+    }
+
+    public function getCommand(string $command_name): ?Command
+    {
+        return $this->commands[$command_name] ?? null;
+    }
+
+    public function getForm(int $id): ?Form
+    {
+        return $this->forms[$id] ?? null;
     }
 
     public function register(string $class, string $usage): void
@@ -55,7 +66,10 @@ final class parsecmd
                 "Class $class passed to parsecmd::register() is not a subclass of \\adeynes\\parsecmd\\Command!"
             );
         }
-        $map->register($plugin->getName(), new $class($plugin, CommandParser::generateBlueprint($usage)));
+        /** @var Command $command */
+        $command = new $class($plugin, CommandParser::generateBlueprint($usage));
+        $map->register($plugin->getName(), $command);
+        $this->commands[$command->getName()] = $command;
     }
 
     public function newForm(): Form
