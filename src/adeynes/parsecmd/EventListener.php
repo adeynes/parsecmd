@@ -41,30 +41,17 @@ final class EventListener implements Listener
 
         $data = $form->process($data);
         // TODO: fail noisily, this should never happen
-        if (!$command = $this->getVirion()->getCommand($form->getCommandName())) return;
+        var_dump($command_name = $form->getCommandName());
+        if (!$command = $this->getVirion()->getCommand($command_name)) return;
 
         $blueprint = $command->getBlueprint();
-        $usage = $command->getBlueprint()->getUsage();
-        foreach ($blueprint->getArguments() as $argument) {
-            $name = $argument->getName();
-            $datum = $data[$name];
-            // Replace any word containing the chunk name with the value
-            $usage = preg_replace("/\s\??$name\S*/", " $datum", $usage);
-        }
-
-        foreach ($blueprint->getFlags() as $flag) {
-            $name = $flag->getName();
-            $datum = $data[$name];
-            if ($flag->getLength() === 0) {
-                if ($datum === true) continue;
-                $usage = preg_replace("/\s-$name\S*/", '', $usage);
-            } else {
-                $usage = preg_replace("/\s-$name\S*/", " -$name $datum", $usage);
-            }
-        }
-
-        $this->getVirion()->getPlugin()->getServer()->dispatchCommand($player, ltrim($usage, '/'));
+        $usage = $blueprint->populateUsage($data);
         var_dump($usage);
+
+        $this->getVirion()->getPlugin()->getServer()->dispatchCommand(
+            $player,
+            "$command_name " . ltrim($usage, '/')
+        );
     }
 
 }

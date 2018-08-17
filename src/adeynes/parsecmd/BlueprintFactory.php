@@ -23,22 +23,21 @@ class BlueprintFactory
         }
 
         foreach ($blueprint['flags'] as $flag_name => $flag) {
-            $aliases = $flag['aliases'] ?? null;
+            $aliases = $flag['aliases'] ?? [];
             // make index higher than all others to merge
-            $names = [count($aliases) => $flag['name']] + $aliases;
+            $names = [count($aliases) => $flag_name] + $aliases;
             $flag = new Flag(
                 $flag_name,
                 $flag['length'] ?? 1,
                 $flag['display'] ?? null,
-                $flag['options'] ?? null
+                $flag['options'] ?? []
             );
 
             foreach ($names as $name) {
                 $flags[$name] = $flag;
             }
         }
-
-        // TODO: ability to use default usage from plugin.yml
+        
         return new CommandBlueprint($arguments, $flags, $usage);
     }
 

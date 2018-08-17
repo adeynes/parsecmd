@@ -22,11 +22,11 @@ class CommandBlueprint
      */
     public function __construct(array $arguments, array $flags, ?string $usage)
     {
-        foreach ($arguments as $argument) {
-            $this->arguments[$argument->getName()] = $argument;
+        foreach ($arguments as $name => $argument) {
+            $this->arguments[$name] = $argument;
         }
-        foreach ($flags as $flag) {
-            $this->flags[$flag->getName()] = $flag;
+        foreach ($flags as $name => $flag) {
+            $this->flags[$name] = $flag;
         }
         $this->usage = $usage;
     }
@@ -80,19 +80,43 @@ class CommandBlueprint
     {
         foreach ($this->getArguments() as $argument) {
             $name = $argument->getName();
-            $form->addInput(ucfirst($name), '', '', $name);
+            $form->addInput($argument->getDisplay(), '', '', $name);
+        }
+
+        $done_flags = [];
+
+        foreach ($this->getFlags() as $flag) {
+            $name = $flag->getName();
+            if (isset($done_flags[$name])) continue;
+            if ($flag->getLength() === 0) {
+                $form->addToggle($flag->getDisplay(), false, $name);
+            } else {
+                if ($flag->hasOptions()) {
+                    $form->addDropdown($flag->getDisplay(), $flag->getOptions(), null, $name);
+                } else {
+                    $form->addInput($flag->getDisplay() . " (optional)", '', '', $name);
+                }
+            }
+            $done_flags[$name] = $name;
+        }
+
+        return $form;
+    }
+
+    public function populateUsage(array $data): string
+    {
+        $usage = '';
+        foreach ($this->getArguments() as $argument) {
+            $name = $argument->getName();
+            $usage .= "{$data[$name]} ";
         }
 
         foreach ($this->getFlags() as $flag) {
             $name = $flag->getName();
-            if ($flag->getLength() === 0) {
-                $form->addToggle(ucfirst($name), false, $name);
-            } else {
-                $form->addInput(ucfirst($name) . " (optional)", '', '', $name);
-            }
+            $usage .= "-$name {$data[$name]} ";
         }
 
-        return $form;
+        return trim($usage);
     }
 
 }
