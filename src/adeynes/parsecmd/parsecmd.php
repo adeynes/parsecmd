@@ -28,12 +28,15 @@ final class parsecmd
         $plugin->getServer()->getPluginManager()->registerEvents(new EventListener($this), $plugin);
     }
 
-    public static function new(UsesParsecmdPlugin $plugin): ?self
+    public static function new(UsesParsecmdPlugin $plugin, array $commands = []): ?self
     {
         if (self::getInstance()) {
             $plugin->getServer()->getLogger()->critical("{$plugin->getName()} has already instantiated parsecmd!");
             return null;
         }
+
+        $parsecmd = new self($plugin);
+        $parsecmd->registerAll($commands);
         return new self($plugin);
     }
 
@@ -57,7 +60,20 @@ final class parsecmd
         return $this->forms[$id] ?? null;
     }
 
-    public function register(string $class, string $usage): void
+    private function registerAll(array $commands): void
+    {
+        foreach ($commands['commands'] as $command) {
+            $blueprint = $command['blueprint'];
+            $blueprint = is_array($blueprint) ? $blueprint : $commands['blueprints'][$blueprint];
+            $this->register(
+                $command['class'],
+                BlueprintFactory::generate($blueprint, $command['usage']),
+                $command['aliases'] ?? []
+            );
+        }
+    }
+
+    public function register(string $class, CommandBlueprint $blueprint, array $aliases): void
     {
         $plugin = $this->getPlugin();
         $map = $plugin->getServer()->getCommandMap();
@@ -67,7 +83,8 @@ final class parsecmd
             );
         }
         /** @var Command $command */
-        $command = new $class($plugin, CommandParser::generateBlueprint($usage));
+        $command = new $class($plugin, $blueprint);
+        $command->setAliases($aliases);
         $map->register($plugin->getName(), $command);
         $this->commands[$command->getName()] = $command;
     }

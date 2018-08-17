@@ -9,10 +9,10 @@ class Argument extends UsageChunk
     /** @var bool */
     protected $is_optional;
 
-    public function __construct(string $name, int $length, bool $is_optional)
+    public function __construct(string $name, int $length, ?string $display, bool $is_optional)
     {
         $this->is_optional = $is_optional;
-        parent::__construct($name, $length);
+        parent::__construct($name, $length, $display);
     }
 
     public function isOptional(): bool
