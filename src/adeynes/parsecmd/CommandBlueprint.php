@@ -87,7 +87,9 @@ class CommandBlueprint
 
         foreach ($this->getFlags() as $flag) {
             $name = $flag->getName();
+
             if (isset($done_flags[$name])) continue;
+
             if ($flag->getLength() === 0) {
                 $form->addToggle($flag->getDisplay(), false, $name);
             } else {
@@ -111,9 +113,20 @@ class CommandBlueprint
             $usage .= "{$data[$name]} ";
         }
 
+        $done_flags = [];
+
         foreach ($this->getFlags() as $flag) {
             $name = $flag->getName();
-            $usage .= "-$name {$data[$name]} ";
+
+            if (isset($done_flags[$name])) continue;
+
+            $datum = $data[$name];
+            if (is_bool($datum)) {
+                $usage .= $datum ? "-$name " : '';
+            } else {
+                $usage .= "-$name {$data[$name]} ";
+            }
+            $done_flags[$name] = $name;
         }
 
         return trim($usage);

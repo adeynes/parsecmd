@@ -41,7 +41,7 @@ final class EventListener implements Listener
 
         $data = $form->process($data);
         // TODO: fail noisily, this should never happen
-        var_dump($command_name = $form->getCommandName());
+        $command_name = $form->getCommandName();
         if (!$command = $this->getVirion()->getCommand($command_name)) return;
 
         $blueprint = $command->getBlueprint();
@@ -50,7 +50,7 @@ final class EventListener implements Listener
 
         $this->getVirion()->getPlugin()->getServer()->dispatchCommand(
             $player,
-            "$command_name " . ltrim($usage, '/')
+            "$command_name $usage"
         );
     }
 

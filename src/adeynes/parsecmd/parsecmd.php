@@ -38,7 +38,7 @@ final class parsecmd
 
         $parsecmd = new self($plugin);
         $parsecmd->registerAll($commands, $override);
-        return new self($plugin);
+        return $parsecmd;
     }
 
     public static function getInstance(): ?self
