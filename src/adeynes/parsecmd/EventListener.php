@@ -45,7 +45,7 @@ final class EventListener implements Listener
         if (!$command = $this->getVirion()->getCommand($command_name)) return;
 
         $blueprint = $command->getBlueprint();
-        $usage = $blueprint->populateUsage($data);
+        $usage = $blueprint->populateUsage($form, $data);
         var_dump($usage);
 
         $this->getVirion()->getPlugin()->getServer()->dispatchCommand(

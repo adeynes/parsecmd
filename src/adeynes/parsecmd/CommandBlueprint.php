@@ -105,7 +105,7 @@ class CommandBlueprint
         return $form;
     }
 
-    public function populateUsage(array $data): string
+    public function populateUsage(Form $form, array $data): string
     {
         $usage = '';
         foreach ($this->getArguments() as $argument) {
@@ -124,7 +124,11 @@ class CommandBlueprint
             if (is_bool($datum)) {
                 $usage .= $datum ? "-$name " : '';
             } else {
-                $usage .= "-$name {$data[$name]} ";
+                if ($flag->hasOptions()) {
+                    $usage .= "-$name {$form->getDropdownValues()[$name][$datum]}";
+                } else {
+                    $usage .= "-$name {$data[$name]} ";
+                }
             }
             $done_flags[$name] = $name;
         }

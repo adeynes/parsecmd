@@ -22,6 +22,8 @@ class Form
      * @var array Nice human-readable names to reference fields instead of good ol' numbers
      */
     protected $aliases = [];
+    
+    protected $dropdown_values = [];
 
     public function __construct(int $id)
     {
@@ -49,6 +51,14 @@ class Form
     public function getCommandName(): ?string
     {
         return $this->command_name;
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function getDropdownValues(): array
+    {
+        return $this->dropdown_values;
     }
 
     public function setTitle(string $title): self
@@ -137,6 +147,10 @@ class Form
             $content['default'] = $default;
         }
 
+        foreach ($options as $i => $option) {
+            $this->dropdown_values[$alias][$i] = $option;
+        }
+        
         return $this->addContent($content, $alias);
     }
 
