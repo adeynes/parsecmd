@@ -80,7 +80,7 @@ final class parsecmd
         $plugin = $this->getPlugin();
         $map = $plugin->getServer()->getCommandMap();
 
-        if (!is_subclass_of($class, '\\adeynes\\parsecmd\\Command')) {
+        if (!is_subclass_of($class, Command::class)) {
             throw new \InvalidArgumentException(
                 "Class $class passed to parsecmd::register() is not a subclass of \\adeynes\\parsecmd\\Command!"
             );
