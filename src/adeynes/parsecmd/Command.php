@@ -61,7 +61,6 @@ abstract class Command extends PMCommand implements PluginIdentifiableCommand
             $this->getBlueprint()->populateForm($form)->send($sender);
             return false;
         }
-        var_dump($command);
 
         return $this->_execute($sender, $command);
     }

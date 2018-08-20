@@ -46,7 +46,6 @@ final class EventListener implements Listener
 
         $blueprint = $command->getBlueprint();
         $usage = $blueprint->populateUsage($form, $data);
-        var_dump($usage);
 
         $this->getVirion()->getPlugin()->getServer()->dispatchCommand(
             $player,
