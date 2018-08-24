@@ -27,7 +27,7 @@ class CommandParser
 
             // Remove tag & tag parameters
             // array_diff_key() doesn't reorder the keys
-            $arguments = array_diff_key($arguments, self::makeKeys(range($i, $i + $length)));
+            $arguments = array_diff_key($arguments, array_flip(range($i, $i + $length)));
         }
 
         $parsed_arguments = [];
@@ -68,22 +68,6 @@ class CommandParser
         $time = trim($time);
 
         return $time === '' ? time() : strtotime($time);
-    }
-
-    /**
-     * Turns the values of an array into the keys of the return array. Populates values with an empty string
-     * @param array $array
-     * @return array
-     */
-    private static function makeKeys(array $array): array
-    {
-        $values_as_keys = [];
-
-        foreach ($array as $value) {
-            $values_as_keys[$value] = '';
-        }
-
-        return $values_as_keys;
     }
 
 }
