@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\parsecmd;
+namespace adeynes\parsecmd\command;
+
+use adeynes\parsecmd\command\blueprint\CommandBlueprint;
 
 class ParsedCommand
 {
@@ -16,7 +18,7 @@ class ParsedCommand
     protected $flags;
 
     /**
-     * @param CommandBlueprint blueprint
+     * @param CommandBlueprint $blueprint
      * @param string[] $arguments
      * @param string[] $flags
      */

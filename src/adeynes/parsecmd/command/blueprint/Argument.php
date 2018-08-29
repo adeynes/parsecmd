@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\parsecmd;
+namespace adeynes\parsecmd\command\blueprint;
 
 class Argument extends UsageChunk
 {

@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\parsecmd;
+namespace adeynes\parsecmd\command;
 
+use adeynes\parsecmd\command\blueprint\CommandBlueprint;
+use adeynes\parsecmd\form\CommandForm;
 use pocketmine\command\Command as PMCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
@@ -13,13 +15,13 @@ use pocketmine\plugin\Plugin;
 abstract class Command extends PMCommand implements PluginIdentifiableCommand
 {
 
-    /** @var UsesParsecmdPlugin */
+    /** @var Plugin */
     protected $plugin;
 
     /** @var CommandBlueprint */
     protected $blueprint;
 
-    protected function __construct(UsesParsecmdPlugin $plugin, CommandBlueprint $blueprint, string $name,
+    protected function __construct(Plugin $plugin, CommandBlueprint $blueprint, string $name,
                                    string $permission = null, string $description = '', string $usage = null) {
         $this->plugin = $plugin;
         $this->blueprint = $blueprint;
@@ -27,9 +29,6 @@ abstract class Command extends PMCommand implements PluginIdentifiableCommand
         parent::__construct($name, $description, $usage ?? $blueprint->getUsage());
     }
 
-    /**
-     * @return UsesParsecmdPlugin
-     */
     public function getPlugin(): Plugin
     {
         return $this->plugin;

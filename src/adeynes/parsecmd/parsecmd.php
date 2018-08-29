@@ -3,31 +3,30 @@ declare(strict_types=1);
 
 namespace adeynes\parsecmd;
 
+use adeynes\parsecmd\command\blueprint\BlueprintFactory;
+use adeynes\parsecmd\command\blueprint\CommandBlueprint;
+use adeynes\parsecmd\command\Command;
+use pocketmine\plugin\Plugin;
+
 final class parsecmd
 {
 
     /** @var null|parsecmd */
     private static $instance = null;
 
-    /** @var UsesParsecmdPlugin */
+    /** @var Plugin */
     private $plugin;
 
     /** @var Command[] */
     private $commands;
 
-    /** @var Form[] */
-    private $forms;
-
-    /** @var int */
-    private $next_form_id;
-
-    private function __construct(UsesParsecmdPlugin $plugin)
+    private function __construct(Plugin $plugin)
     {
         $this->plugin = $plugin;
     }
 
     // TODO: per-command override
-    public static function new(UsesParsecmdPlugin $plugin, array $commands = [], bool $override = false): ?self
+    public static function new(Plugin $plugin, array $commands = [], bool $override = false): ?self
     {
         if (self::getInstance()) {
             $plugin->getServer()->getLogger()->critical("{$plugin->getName()} has already instantiated parsecmd!");
@@ -44,7 +43,7 @@ final class parsecmd
         return self::$instance;
     }
 
-    public function getPlugin(): UsesParsecmdPlugin
+    public function getPlugin(): Plugin
     {
         return $this->plugin;
     }
@@ -52,11 +51,6 @@ final class parsecmd
     public function getCommand(string $command_name): ?Command
     {
         return $this->commands[$command_name] ?? null;
-    }
-
-    public function getForm(int $id): ?Form
-    {
-        return $this->forms[$id] ?? null;
     }
 
     private function registerAll(array $commands, bool $override = false): void

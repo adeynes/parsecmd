@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\parsecmd;
+namespace adeynes\parsecmd\command\blueprint;
+
+use adeynes\parsecmd\form\Form;
 
 class CommandBlueprint
 {
