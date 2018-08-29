@@ -14,6 +14,9 @@ class CommandBlueprint
     /** @var Flag[] */
     protected $flags = [];
 
+    /** @var string[] */
+    protected $flag_aliases = [];
+
     /** @var null|string */
     protected $usage;
 
@@ -59,6 +62,27 @@ class CommandBlueprint
         return $this->getFlags()[$name] ?? null;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getFlagAliases(): array
+    {
+        return $this->flag_aliases;
+    }
+
+    public function getFlagAlias(string $alias): ?string
+    {
+        return $this->getFlagAliases()[$alias] ?? null;
+    }
+
+    /**
+     * @param string[] $aliases
+     */
+    public function addFlagAliases(array $aliases): void
+    {
+        $this->flag_aliases = array_merge($this->flag_aliases, $aliases);
+    }
+
     public function getUsage(): ?string
     {
         return $this->usage;
@@ -85,12 +109,8 @@ class CommandBlueprint
             $form->addInput($argument->getDisplay(), '', '', $name);
         }
 
-        $done_flags = [];
-
         foreach ($this->getFlags() as $flag) {
             $name = $flag->getName();
-
-            if (isset($done_flags[$name])) continue;
 
             if ($flag->getLength() === 0) {
                 $form->addToggle($flag->getDisplay(), false, $name);
@@ -101,7 +121,6 @@ class CommandBlueprint
                     $form->addInput($flag->getDisplay() . " (optional)", '', '', $name);
                 }
             }
-            $done_flags[$name] = $name;
         }
 
         return $form;
@@ -115,12 +134,8 @@ class CommandBlueprint
             $usage .= "{$data[$name]} ";
         }
 
-        $done_flags = [];
-
         foreach ($this->getFlags() as $flag) {
             $name = $flag->getName();
-
-            if (isset($done_flags[$name])) continue;
 
             $datum = $data[$name];
             if (is_bool($datum)) {
@@ -132,7 +147,6 @@ class CommandBlueprint
                     $usage .= "-$name {$data[$name]} ";
                 }
             }
-            $done_flags[$name] = $name;
         }
 
         return trim($usage);

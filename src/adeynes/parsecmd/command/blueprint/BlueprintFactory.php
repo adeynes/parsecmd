@@ -22,23 +22,28 @@ class BlueprintFactory
             );
         }
 
+        $flag_aliases = [];
+
         foreach ($blueprint['flags'] as $flag_name => $flag) {
-            $aliases = $flag['aliases'] ?? [];
-            // make index higher than all others to merge
-            $names = [count($aliases) => $flag_name] + $aliases;
             $flag = new Flag(
                 $flag_name,
                 $flag['length'] ?? 1,
                 $flag['display'] ?? null,
                 $flag['options'] ?? []
             );
+            $flags[$flag_name] = $flag;
 
-            foreach ($names as $name) {
-                $flags[$name] = $flag;
+            $aliases = $flag['aliases'] ?? [];
+            $aliases[] = $flag_name;
+            foreach ($aliases as $alias) {
+                $flag_aliases[$alias] = $flag_name;
             }
         }
-        
-        return new CommandBlueprint($arguments, $flags, $usage);
+
+        $blueprint = new CommandBlueprint($arguments, $flags, $usage);
+        $blueprint->addFlagAliases($flag_aliases);
+
+        return $blueprint;
     }
 
 }

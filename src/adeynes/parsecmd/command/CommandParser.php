@@ -15,11 +15,11 @@ class CommandParser
         foreach ($arguments as $i => $argument) {
             if (strpos($argument, '-') !== 0) continue;
 
-            // Avoid getting finding the tag twice; only first time counts
-            if (isset($flags[$flag = substr($argument, 1)])) continue;
+            // Avoid getting finding the flag twice; only first time counts
+            $flag_name = $blueprint->getFlagAlias(substr($argument, 1));
+            if (isset($flags[$flag_name])) continue;
 
-            // Use is_null because $length can be 0 so !0 would be true
-            if (is_null($flag = $blueprint->getFlag($flag))) continue;
+            if (is_null($flag = $blueprint->getFlag($flag_name))) continue;
 
             $length = $flag->getLength();
             if ($length === -1) $length = count($copy);
