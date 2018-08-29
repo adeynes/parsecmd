@@ -55,7 +55,7 @@ abstract class Command extends PMCommand implements PluginIdentifiableCommand
         if ($command->getArgumentCount() < $this->getBlueprint()->getMinimumArgumentCount()) {
             if (!$sender instanceof Player) throw new InvalidCommandSyntaxException;
 
-            $form = $this->getPlugin()->getParsecmd()->newForm()
+            $form = (new CommandForm())
                 ->setCommandName($this->getName())
                 ->setTitle(strtoupper($this->getName()));
             $this->getBlueprint()->populateForm($form)->send($sender);

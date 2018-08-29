@@ -24,8 +24,6 @@ final class parsecmd
     private function __construct(UsesParsecmdPlugin $plugin)
     {
         $this->plugin = $plugin;
-        $this->next_form_id = rand(0xAAAAAA, 0xFFFFFF);
-        $plugin->getServer()->getPluginManager()->registerEvents(new EventListener($this), $plugin);
     }
 
     // TODO: per-command override
@@ -97,18 +95,6 @@ final class parsecmd
         $command->setAliases($aliases);
         $map->register($plugin->getName(), $command);
         $this->commands[$command->getName()] = $command;
-    }
-
-    public function newForm(): Form
-    {
-        $form = new Form($id = $this->bumpNextFormId());
-        $this->forms[$id] = $form;
-        return $form;
-    }
-
-    private function bumpNextFormId(): int
-    {
-        return $this->next_form_id++;
     }
 
 }
