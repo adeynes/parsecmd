@@ -27,7 +27,7 @@ class CommandForm extends Form
         if (is_null($data)) return;
         assert(is_array($data)); // This is a custom_form, $data should always be array or null
 
-        FormResponseHandler::handleCommandFormResponse($this, $player, $data);
+        FormResponseHandler::handleCommandFormResponse($this, $player, $this->process($data));
     }
 
 }

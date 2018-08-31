@@ -25,6 +25,12 @@ class BlueprintFactory
         $flag_aliases = [];
 
         foreach ($blueprint['flags'] as $flag_name => $flag) {
+            $aliases = $flag['aliases'] ?? [];
+            $aliases[] = $flag_name;
+            foreach ($aliases as $alias) {
+                $flag_aliases[$alias] = $flag_name;
+            }
+
             $flag = new Flag(
                 $flag_name,
                 $flag['length'] ?? 1,
@@ -32,12 +38,6 @@ class BlueprintFactory
                 $flag['options'] ?? []
             );
             $flags[$flag_name] = $flag;
-
-            $aliases = $flag['aliases'] ?? [];
-            $aliases[] = $flag_name;
-            foreach ($aliases as $alias) {
-                $flag_aliases[$alias] = $flag_name;
-            }
         }
 
         $blueprint = new CommandBlueprint($arguments, $flags, $usage);

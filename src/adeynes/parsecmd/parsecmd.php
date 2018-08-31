@@ -35,6 +35,7 @@ final class parsecmd
 
         $parsecmd = new self($plugin);
         $parsecmd->registerAll($commands, $override);
+        self::$instance = $parsecmd;
         return $parsecmd;
     }
 
