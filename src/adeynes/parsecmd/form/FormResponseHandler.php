@@ -11,7 +11,6 @@ class FormResponseHandler
 
     public static function handleCommandFormResponse(CommandForm $form, Player $player, array $data): void
     {
-        var_dump($data);
         $parsecmd = parsecmd::getInstance();
         $command_name = $form->getCommandName();
 
@@ -19,7 +18,6 @@ class FormResponseHandler
 
         $blueprint = $command->getBlueprint();
         $usage = $blueprint->populateUsage($form, $data);
-        var_dump($usage);
 
         $parsecmd->getPlugin()->getServer()->dispatchCommand(
             $player,
