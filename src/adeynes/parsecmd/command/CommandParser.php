@@ -56,13 +56,18 @@ class CommandParser
         $parts = str_split($duration);
         $time_units = ['y' => 'year', 'M' => 'month', 'w' => 'week', 'd' => 'day', 'h' => 'hour', 'm' => 'minute'];
         $time = '';
+        $i = -1;
 
-        foreach ($time_units as $symbol => $unit) {
-            if (($length = array_search($symbol, $parts)) === false) continue;
+        foreach ($parts as $part) {
+            ++$i;
+            if (!isset($time_units[$part])) continue;
+            $unit = $time_units[$part];
 
-            $n = implode('', array_slice($parts, 0, $length));
+            $n = implode('', array_slice($parts, 0, $i));
             $time .= "$n $unit ";
-            array_splice($parts, 0, $length + 1);
+            array_splice($parts, 0, $i + 1);
+
+            $i = -1;
         }
 
         $time = trim($time);
