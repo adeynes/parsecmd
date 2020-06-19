@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\parsecmd;
+namespace adeynes\parsecmd\command;
 
 class CommandParser
 {
@@ -15,11 +15,11 @@ class CommandParser
         foreach ($arguments as $i => $argument) {
             if (strpos($argument, '-') !== 0) continue;
 
-            // Avoid getting finding the tag twice; only first time counts
-            if (isset($flags[$flag = substr($argument, 1)])) continue;
+            // Avoid getting finding the flag twice; only first time counts
+            $flag_name = $blueprint->getFlagAlias(substr($argument, 1));
+            if (isset($flags[$flag_name])) continue;
 
-            // Use is_null because $length can be 0 so !0 would be true
-            if (is_null($flag = $blueprint->getFlag($flag))) continue;
+            if (is_null($flag = $blueprint->getFlag($flag_name))) continue;
 
             $length = $flag->getLength();
             if ($length === -1) $length = count($copy);
@@ -27,7 +27,7 @@ class CommandParser
 
             // Remove tag & tag parameters
             // array_diff_key() doesn't reorder the keys
-            $arguments = array_diff_key($arguments, self::makeKeys(range($i, $i + $length)));
+            $arguments = array_diff_key($arguments, array_flip(range($i, $i + $length)));
         }
 
         $parsed_arguments = [];
@@ -51,39 +51,33 @@ class CommandParser
         return new ParsedCommand($blueprint, $parsed_arguments, $flags);
     }
 
+    /**
+     * @param string $duration Must be of the form [ay][bM][cw][dd][eh][fm] with a, b, c, d, e, f integers
+     * @return int UNIX timestamp corresponding to the duration (1y will return the timestamp one year from now)
+     * @throws \InvalidArgumentException If the duration is invalid
+     */
     public static function parseDuration(string $duration): int
     {
-        $parts = str_split($duration);
         $time_units = ['y' => 'year', 'M' => 'month', 'w' => 'week', 'd' => 'day', 'h' => 'hour', 'm' => 'minute'];
+        $regex = '/^([0-9]+y)?([0-9]+M)?([0-9]+w)?([0-9]+d)?([0-9]+h)?([0-9]+m)?$/';
+        $matches = [];
+        $is_matching = preg_match($regex, $duration, $matches);
+        if (!$is_matching) {
+            throw new \InvalidArgumentException("Invalid duration passed to CommandParser::parseDuration(). Must be of the form [ay][bM][cw][dd][eh][fm] with a, b, c, d, e, f integers");
+        }
+
         $time = '';
 
-        foreach ($time_units as $symbol => $unit) {
-            if (($length = array_search($symbol, $parts)) === false) continue;
-
-            $n = implode('', array_slice($parts, 0, $length));
+        foreach ($matches as $index => $match) {
+            if ($index === 0 || strlen($match) === 0) continue; // index 0 is the full match
+            $n = substr($match, 0, -1);
+            $unit = $time_units[substr($match, -1)];
             $time .= "$n $unit ";
-            array_splice($parts, 0, $length + 1);
         }
 
         $time = trim($time);
 
         return $time === '' ? time() : strtotime($time);
-    }
-
-    /**
-     * Turns the values of an array into the keys of the return array. Populates values with an empty string
-     * @param array $array
-     * @return array
-     */
-    private static function makeKeys(array $array): array
-    {
-        $values_as_keys = [];
-
-        foreach ($array as $value) {
-            $values_as_keys[$value] = '';
-        }
-
-        return $values_as_keys;
     }
 
 }

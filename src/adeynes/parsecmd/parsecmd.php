@@ -3,33 +3,30 @@ declare(strict_types=1);
 
 namespace adeynes\parsecmd;
 
+use adeynes\parsecmd\command\blueprint\BlueprintFactory;
+use adeynes\parsecmd\command\blueprint\CommandBlueprint;
+use adeynes\parsecmd\command\Command;
+use pocketmine\plugin\Plugin;
+
 final class parsecmd
 {
 
     /** @var null|parsecmd */
     private static $instance = null;
 
-    /** @var UsesParsecmdPlugin */
+    /** @var Plugin */
     private $plugin;
 
     /** @var Command[] */
     private $commands;
 
-    /** @var Form[] */
-    private $forms;
-
-    /** @var int */
-    private $next_form_id;
-
-    private function __construct(UsesParsecmdPlugin $plugin)
+    private function __construct(Plugin $plugin)
     {
         $this->plugin = $plugin;
-        $this->next_form_id = rand(0xAAAAAA, 0xFFFFFF);
-        $plugin->getServer()->getPluginManager()->registerEvents(new EventListener($this), $plugin);
     }
 
     // TODO: per-command override
-    public static function new(UsesParsecmdPlugin $plugin, array $commands = [], bool $override = false): ?self
+    public static function new(Plugin $plugin, array $commands = [], bool $override = false): ?self
     {
         if (self::getInstance()) {
             $plugin->getServer()->getLogger()->critical("{$plugin->getName()} has already instantiated parsecmd!");
@@ -38,6 +35,7 @@ final class parsecmd
 
         $parsecmd = new self($plugin);
         $parsecmd->registerAll($commands, $override);
+        self::$instance = $parsecmd;
         return $parsecmd;
     }
 
@@ -46,7 +44,7 @@ final class parsecmd
         return self::$instance;
     }
 
-    public function getPlugin(): UsesParsecmdPlugin
+    public function getPlugin(): Plugin
     {
         return $this->plugin;
     }
@@ -54,11 +52,6 @@ final class parsecmd
     public function getCommand(string $command_name): ?Command
     {
         return $this->commands[$command_name] ?? null;
-    }
-
-    public function getForm(int $id): ?Form
-    {
-        return $this->forms[$id] ?? null;
     }
 
     private function registerAll(array $commands, bool $override = false): void
@@ -91,24 +84,12 @@ final class parsecmd
 
         if ($override && $old = $map->getCommand($command->getName())) {
             $old->setLabel($command . '_disabled');
-            $old->unregister($map);
+            $map->unregister($old);
         }
 
         $command->setAliases($aliases);
         $map->register($plugin->getName(), $command);
         $this->commands[$command->getName()] = $command;
-    }
-
-    public function newForm(): Form
-    {
-        $form = new Form($id = $this->bumpNextFormId());
-        $this->forms[$id] = $form;
-        return $form;
-    }
-
-    private function bumpNextFormId(): int
-    {
-        return $this->next_form_id++;
     }
 
 }

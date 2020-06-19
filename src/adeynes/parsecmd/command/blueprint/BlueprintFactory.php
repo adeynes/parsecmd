@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\parsecmd;
+namespace adeynes\parsecmd\command\blueprint;
 
 class BlueprintFactory
 {
@@ -22,23 +22,28 @@ class BlueprintFactory
             );
         }
 
+        $flag_aliases = [];
+
         foreach ($blueprint['flags'] as $flag_name => $flag) {
             $aliases = $flag['aliases'] ?? [];
-            // make index higher than all others to merge
-            $names = [count($aliases) => $flag_name] + $aliases;
+            $aliases[] = $flag_name;
+            foreach ($aliases as $alias) {
+                $flag_aliases[$alias] = $flag_name;
+            }
+
             $flag = new Flag(
                 $flag_name,
                 $flag['length'] ?? 1,
                 $flag['display'] ?? null,
                 $flag['options'] ?? []
             );
-
-            foreach ($names as $name) {
-                $flags[$name] = $flag;
-            }
+            $flags[$flag_name] = $flag;
         }
-        
-        return new CommandBlueprint($arguments, $flags, $usage);
+
+        $blueprint = new CommandBlueprint($arguments, $flags, $usage);
+        $blueprint->addFlagAliases($flag_aliases);
+
+        return $blueprint;
     }
 
 }

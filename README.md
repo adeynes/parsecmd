@@ -1,11 +1,15 @@
 # parsecmd
 
-## This README is outdated for 2.0!
+### This README is outdated for 2.0 and up!
+### Current stable version: 3.1.3
 
-**parsecmd** is a powerful virion for parsing commands in PocketMine-MP. It parses argument lists and tags (much like shell flags) into a data structure that can be easily queries.<br>
-*Upcoming feature: UI generation*
+**parsecmd** is a powerful virion for parsing commands in PocketMine-MP. It parses argument lists and flags (much like shell flags) into a data structure that can be easily queried.
 
-Throughout this README, our example command will be `/rawtell`, which sends a message, popup, or title to a player without the `[Steve -> Alex]` introduction. The usage is `/rawtell <player> <message> [-nomessage] [-popup] [-title] [-password <password>]`. By default, the command sends a chat message. The `nomessage` tag does not send the message through chat. The `popup` tag sends a popup. The `title` tag sends a title. The `password` tag accepts a 3-argument password. The correct password is `bush baked beans`. If the given password matches, the specified player will receive a special message.
+Throughout this README, our example command will be `/rawtell`, which sends a message, popup, or title to a player without the `[Steve -> Alex]` introduction. The usage is `/rawtell <player> <message> [-nomessage|-nom] [-popup|-p] [-title|-t] [-password <password>]`. By default, the command sends a chat message.<br>
+The `nomessage` tag does not send the message through chat and its alias is `nom`.<br>
+The `popup` tag sends a popup and its alias is `p`.<br>
+The `title` tag sends a title and its alias is `t`.<br>
+The `password` tag accepts a 3-argument password. The correct password is `bush baked beans`. If the given password matches, the specified player will receive a special message.
 
 ### The `PCMDCommand` class
 The `PCMDCommand` class extends `pocketmine\command\Command` and reduces boilerplate code for command classes.<br>

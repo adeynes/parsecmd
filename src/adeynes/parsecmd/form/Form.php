@@ -1,33 +1,29 @@
 <?php
 declare(strict_types=1);
 
-namespace adeynes\parsecmd;
+namespace adeynes\parsecmd\form;
 
-use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
+use pocketmine\form\Form as IForm;
 use pocketmine\Player;
 
-class Form
+abstract class Form implements IForm
 {
 
-    /** @var int */
-    protected $id;
-
-    /** @var array[][] */
+    /** @var array */
     protected $data;
 
-    /** @var string */
-    protected $command_name;
-
     /**
-     * @var array Nice human-readable names to reference fields instead of good ol' numbers
+     * @var array Nice human-readable names to reference fields instead of numbers
      */
     protected $aliases = [];
-    
+
+    /**
+     * @var string[][] Stores the values as index => value for dropdowns
+     */
     protected $dropdown_values = [];
 
-    public function __construct(int $id)
+    public function __construct()
     {
-        $this->id = $id;
         $this->data = [
             'type' => 'custom_form',
             'title' => '',
@@ -35,22 +31,9 @@ class Form
         ];
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return array[][]
-     */
     public function getData(): array
     {
         return $this->data;
-    }
-
-    public function getCommandName(): ?string
-    {
-        return $this->command_name;
     }
 
     /**
@@ -65,21 +48,6 @@ class Form
     {
         $this->data['title'] = $title;
         return $this;
-    }
-
-    public function setCommandName(string $command_name): self
-    {
-        $this->command_name = $command_name;
-        return $this;
-    }
-
-    public function process(array $data): array
-    {
-        $new = [];
-        foreach ($data as $i => $datum) {
-            $new[$this->aliases[$i]] = $datum;
-        }
-        return $new;
     }
 
     protected function addContent(array $content, ?string $alias): self
@@ -129,7 +97,7 @@ class Form
         }
         return $this->addContent($content, $alias);
     }
-    
+
     public function addStepSlider(string $text, array $steps, int $default = null, string $alias = null): self
     {
         $content = ['type' => 'step_slider', 'text' => $text, 'steps' => $steps];
@@ -150,16 +118,27 @@ class Form
         foreach ($options as $i => $option) {
             $this->dropdown_values[$alias][$i] = $option;
         }
-        
+
         return $this->addContent($content, $alias);
     }
 
     public function send(Player $player): void
     {
-        $packet = new ModalFormRequestPacket();
-        $packet->formId = $this->getId();
-        $packet->formData = json_encode($this->getData());
-        $player->dataPacket($packet);
+        $player->sendForm($this);
+    }
+
+    public function process(array $data): array
+    {
+        $new = [];
+        foreach ($data as $i => $datum) {
+            $new[$this->aliases[$i]] = $datum;
+        }
+        return $new;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->getData();
     }
 
 }
