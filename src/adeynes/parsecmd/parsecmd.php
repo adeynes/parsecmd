@@ -84,7 +84,7 @@ final class parsecmd
 
         if ($override && $old = $map->getCommand($command->getName())) {
             $old->setLabel($command . '_disabled');
-            $old->unregister($map);
+            $map->unregister($old);
         }
 
         $command->setAliases($aliases);
