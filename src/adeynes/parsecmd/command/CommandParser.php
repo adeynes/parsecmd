@@ -51,23 +51,28 @@ class CommandParser
         return new ParsedCommand($blueprint, $parsed_arguments, $flags);
     }
 
+    /**
+     * @param string $duration Must be of the form [ay][bM][cw][dd][eh][fm] with a, b, c, d, e, f integers
+     * @return int UNIX timestamp corresponding to the duration (1y will return the timestamp one year from now)
+     * @throws \InvalidArgumentException If the duration is invalid
+     */
     public static function parseDuration(string $duration): int
     {
-        $parts = str_split($duration);
         $time_units = ['y' => 'year', 'M' => 'month', 'w' => 'week', 'd' => 'day', 'h' => 'hour', 'm' => 'minute'];
+        $regex = '/^([0-9]+y)?([0-9]+M)?([0-9]+w)?([0-9]+d)?([0-9]+h)?([0-9]+m)?$/';
+        $matches = [];
+        $is_matching = preg_match($regex, $duration, $matches);
+        if (!$is_matching) {
+            throw new \InvalidArgumentException("Invalid duration passed to CommandParser::parseDuration(). Must be of the form [ay][bM][cw][dd][eh][fm] with a, b, c, d, e, f integers");
+        }
+
         $time = '';
-        $i = -1;
 
-        foreach ($parts as $part) {
-            ++$i;
-            if (!isset($time_units[$part])) continue;
-            $unit = $time_units[$part];
-
-            $n = implode('', array_slice($parts, 0, $i));
+        foreach ($matches as $index => $match) {
+            if ($index === 0) continue; // index 0 is the full match
+            $n = substr($match, 0, -1);
+            $unit = $time_units[substr($match, -1)];
             $time .= "$n $unit ";
-            array_splice($parts, 0, $i + 1);
-
-            $i = -1;
         }
 
         $time = trim($time);
