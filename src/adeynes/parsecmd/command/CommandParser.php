@@ -69,7 +69,7 @@ class CommandParser
         $time = '';
 
         foreach ($matches as $index => $match) {
-            if ($index === 0) continue; // index 0 is the full match
+            if ($index === 0 || strlen($match) === 0) continue; // index 0 is the full match
             $n = substr($match, 0, -1);
             $unit = $time_units[substr($match, -1)];
             $time .= "$n $unit ";
