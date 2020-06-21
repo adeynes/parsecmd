@@ -17,7 +17,7 @@ class CommandParser
 
             // Avoid getting finding the flag twice; only first time counts
             $flag_name = $blueprint->getFlagAlias(substr($argument, 1));
-            if (isset($flags[$flag_name])) continue;
+            if ($flag_name === null || isset($flags[$flag_name])) continue;
 
             if (is_null($flag = $blueprint->getFlag($flag_name))) continue;
 
