@@ -7,7 +7,7 @@ class Argument extends UsageChunk
 {
 
     /** @var bool */
-    protected $is_optional;
+    protected bool $is_optional;
 
     public function __construct(string $name, int $length, ?string $display, bool $is_optional)
     {

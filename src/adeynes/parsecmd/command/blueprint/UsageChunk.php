@@ -6,14 +6,14 @@ namespace adeynes\parsecmd\command\blueprint;
 abstract class UsageChunk
 {
 
-    /** @var int */
-    protected $name;
+    /** @var string */
+    protected string $name;
 
     /** @var int */
-    protected $length;
+    protected int $length;
     
     /** @var string */
-    protected $display;
+    protected string $display;
 
     public function __construct(string $name, int $length, ?string $display)
     {

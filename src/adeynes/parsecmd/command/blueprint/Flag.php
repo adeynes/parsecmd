@@ -6,8 +6,8 @@ namespace adeynes\parsecmd\command\blueprint;
 class Flag extends UsageChunk
 {
     
-    /** @var mixed[] */
-    protected $options;
+    /** @var mixed*/
+    protected mixed $options;
     
     public function __construct(string $name, int $length, ?string $display, array $options = [])
     {
@@ -21,9 +21,9 @@ class Flag extends UsageChunk
     }
     
     /**
-     * @return mixed[]
+     * @return mixed
      */
-    public function getOptions(): array
+    public function getOptions(): mixed
     {
         return $this->options;
     }

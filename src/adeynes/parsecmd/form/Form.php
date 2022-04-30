@@ -4,23 +4,23 @@ declare(strict_types=1);
 namespace adeynes\parsecmd\form;
 
 use pocketmine\form\Form as IForm;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 abstract class Form implements IForm
 {
 
     /** @var array */
-    protected $data;
+    protected array $data;
 
     /**
      * @var array Nice human-readable names to reference fields instead of numbers
      */
-    protected $aliases = [];
+    protected  array$aliases = [];
 
     /**
      * @var string[][] Stores the values as index => value for dropdowns
      */
-    protected $dropdown_values = [];
+    protected array $dropdown_values = [];
 
     public function __construct()
     {

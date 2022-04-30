@@ -12,13 +12,13 @@ final class parsecmd
 {
 
     /** @var null|parsecmd */
-    private static $instance = null;
+    private static ?parsecmd $instance = null;
 
     /** @var Plugin */
-    private $plugin;
+    private Plugin $plugin;
 
     /** @var Command[] */
-    private $commands;
+    private array $commands;
 
     private function __construct(Plugin $plugin)
     {

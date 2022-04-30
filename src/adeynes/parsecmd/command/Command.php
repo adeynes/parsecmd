@@ -7,19 +7,19 @@ use adeynes\parsecmd\command\blueprint\CommandBlueprint;
 use adeynes\parsecmd\form\CommandForm;
 use pocketmine\command\Command as PMCommand;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
+use pocketmine\plugin\PluginOwned;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 
-abstract class Command extends PMCommand implements PluginIdentifiableCommand
+abstract class Command extends PMCommand implements PluginOwned
 {
 
     /** @var Plugin */
-    protected $plugin;
+    protected Plugin $plugin;
 
     /** @var CommandBlueprint */
-    protected $blueprint;
+    protected CommandBlueprint $blueprint;
 
     protected function __construct(Plugin $plugin, CommandBlueprint $blueprint, string $name,
                                    string $permission = null, string $description = '', string $usage = null) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace adeynes\parsecmd\form;
 
 use adeynes\parsecmd\parsecmd;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class FormResponseHandler
 {

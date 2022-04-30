@@ -1,6 +1,6 @@
 name: parsecmd
 antigen: adeynes\parsecmd
-version: 5.0.1
-api: 3.2.0
+version: 6.0.0
+api: 4.0.0
 author: adeynes
 description: Flexible library for easy command argument parsing

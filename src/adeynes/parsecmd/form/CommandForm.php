@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace adeynes\parsecmd\form;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class CommandForm extends Form
 {
 
     /** @var string */
-    protected $command_name;
+    protected string $command_name;
 
     public function getCommandName(): ?string
     {
