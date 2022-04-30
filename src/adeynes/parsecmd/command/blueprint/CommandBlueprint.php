@@ -9,16 +9,16 @@ class CommandBlueprint
 {
 
     /** @var Argument[] */
-    protected $arguments = [];
+    protected array $arguments = [];
 
     /** @var Flag[] */
-    protected $flags = [];
+    protected array $flags = [];
 
     /** @var string[] */
-    protected $flag_aliases = [];
+    protected array $flag_aliases = [];
 
     /** @var null|string */
-    protected $usage;
+    protected ?string $usage;
 
     /**
      * @param Argument[] $arguments

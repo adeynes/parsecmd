@@ -9,13 +9,13 @@ class ParsedCommand
 {
 
     /** @var CommandBlueprint */
-    protected $blueprint;
+    protected CommandBlueprint $blueprint;
 
     /** @var null[]|string[] */
-    protected $arguments;
+    protected array $arguments;
 
     /** @var string[] */
-    protected $flags;
+    protected array $flags;
 
     /**
      * @param CommandBlueprint $blueprint

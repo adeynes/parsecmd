@@ -13,7 +13,7 @@ class CommandParser
         $blueprint = $command->getBlueprint();
 
         foreach ($arguments as $i => $argument) {
-            if (strpos($argument, '-') !== 0) continue;
+            if (!str_starts_with($argument, '-')) continue;
 
             // Avoid getting finding the flag twice; only first time counts
             $flag_name = $blueprint->getFlagAlias(substr($argument, 1));

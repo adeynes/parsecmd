@@ -1,8 +1,7 @@
 # parsecmd
 
 ### This README is outdated for 2.0 and up!
-### Current stable version: 3.1.3
-
+### Current stable version: 6.0.0
 **parsecmd** is a powerful virion for parsing commands in PocketMine-MP. It parses argument lists and flags (much like shell flags) into a data structure that can be easily queried.
 
 Throughout this README, our example command will be `/rawtell`, which sends a message, popup, or title to a player without the `[Steve -> Alex]` introduction. The usage is `/rawtell <player> <message> [-nomessage|-nom] [-popup|-p] [-title|-t] [-password <password>]`. By default, the command sends a chat message.<br>
